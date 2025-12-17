@@ -1,14 +1,65 @@
-import { Link } from 'react-router-dom';
+// src/app/components/pages/public/LandingPage.tsx
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { PublicLayout } from '../../layouts/PublicLayout';
+import { login, register } from '../../../api/api';
 
 export function LandingPage() {
+  const navigate = useNavigate();
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+
+  // Register form state
+  const [registerName, setRegisterName] = useState('');
+  const [registerEmail, setRegisterEmail] = useState('');
+  const [registerPassword, setRegisterPassword] = useState('');
+
+  // Handle login
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await login(loginEmail, loginPassword);
+      // Redirect to dashboard after successful login
+      navigate('/dashboard/businesses');
+    } catch (err: any) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle register
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await register(registerName, registerEmail, registerPassword);
+      // Redirect to dashboard after successful registration
+      navigate('/dashboard/businesses');
+    } catch (err: any) {
+      setError(err.message || 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <PublicLayout>
       {/* Hero Section */}
       <section className="relative bg-gradient-to-b from-transparent via-purple-900/20 to-transparent border-b border-white/10">
         <div className="container mx-auto px-8 py-24">
           <div className="max-w-3xl mx-auto text-center">
-            {/* Decorative dots */}
             <div className="absolute top-10 left-10 w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
             <div className="absolute top-20 right-20 w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-300"></div>
             <div className="absolute bottom-10 left-1/4 w-2 h-2 bg-pink-400 rounded-full animate-pulse delay-700"></div>
@@ -26,11 +77,12 @@ export function LandingPage() {
                   Explore Nearby Startups
                 </button>
               </Link>
-              <Link to="/dashboard/businesses">
-                <button className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 text-white font-semibold rounded-xl transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform">
-                  Register Your Business
-                </button>
-              </Link>
+              <button
+                onClick={() => setShowRegisterModal(true)}
+                className="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 hover:bg-white/20 text-white font-semibold rounded-xl transition-all shadow-xl hover:shadow-2xl hover:scale-105 transform"
+              >
+                Register Your Business
+              </button>
             </div>
           </div>
         </div>
@@ -104,10 +156,8 @@ export function LandingPage() {
           </div>
 
           <div className="grid grid-cols-3 gap-12 relative">
-            {/* Connection lines */}
             <div className="absolute top-8 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"></div>
             
-            {/* Step 1 */}
             <div className="text-center relative">
               <div className="w-16 h-16 bg-gradient-to-br from-indigo-600 to-purple-600 text-white rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold shadow-xl shadow-indigo-500/50 relative z-10 border-4 border-slate-900">
                 1
@@ -120,7 +170,6 @@ export function LandingPage() {
               </p>
             </div>
 
-            {/* Step 2 */}
             <div className="text-center relative">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-600 to-pink-600 text-white rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold shadow-xl shadow-purple-500/50 relative z-10 border-4 border-slate-900">
                 2
@@ -133,7 +182,6 @@ export function LandingPage() {
               </p>
             </div>
 
-            {/* Step 3 */}
             <div className="text-center relative">
               <div className="w-16 h-16 bg-gradient-to-br from-pink-600 to-red-600 text-white rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-bold shadow-xl shadow-pink-500/50 relative z-10 border-4 border-slate-900">
                 3
@@ -153,7 +201,6 @@ export function LandingPage() {
       <section className="relative py-16">
         <div className="container mx-auto px-8">
           <div className="relative bg-gradient-to-br from-indigo-600/20 via-purple-600/20 to-pink-600/20 backdrop-blur-xl border border-white/20 p-16 text-center rounded-3xl shadow-2xl overflow-hidden">
-            {/* Decorative background elements */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-indigo-500/20 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 right-0 w-64 h-64 bg-purple-500/20 rounded-full blur-3xl"></div>
             
@@ -164,15 +211,172 @@ export function LandingPage() {
               <p className="text-lg text-indigo-200/90 mb-8">
                 Join our startup ecosystem platform today
               </p>
-              <Link to="/dashboard/businesses">
-                <button className="px-10 py-4 bg-gradient-to-r from-white to-indigo-100 text-slate-900 font-bold rounded-xl hover:scale-105 transform transition-all shadow-2xl hover:shadow-white/50">
-                  Get Started
-                </button>
-              </Link>
+              <button
+                onClick={() => setShowRegisterModal(true)}
+                className="px-10 py-4 bg-gradient-to-r from-white to-indigo-100 text-slate-900 font-bold rounded-xl hover:scale-105 transform transition-all shadow-2xl hover:shadow-white/50"
+              >
+                Get Started
+              </button>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-800 rounded-2xl p-8 max-w-md w-full border border-white/20 shadow-2xl">
+            <h2 className="text-2xl font-bold text-white mb-6">Login</h2>
+            
+            {error && (
+              <div className="bg-red-500/20 border border-red-400/30 text-red-300 px-4 py-3 rounded-lg mb-4">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-indigo-200 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={loginEmail}
+                  onChange={(e) => setLoginEmail(e.target.value)}
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:border-indigo-400/50 focus:outline-none text-white"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-indigo-200 mb-2">Password</label>
+                <input
+                  type="password"
+                  value={loginPassword}
+                  onChange={(e) => setLoginPassword(e.target.value)}
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:border-indigo-400/50 focus:outline-none text-white"
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg font-semibold disabled:opacity-50"
+                >
+                  {loading ? 'Loading...' : 'Login'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowLoginModal(false);
+                    setError('');
+                  }}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+
+            <p className="text-center text-indigo-200/70 text-sm mt-4">
+              Don't have an account?{' '}
+              <button
+                onClick={() => {
+                  setShowLoginModal(false);
+                  setShowRegisterModal(true);
+                }}
+                className="text-indigo-400 hover:text-indigo-300"
+              >
+                Register
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Register Modal */}
+      {showRegisterModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-slate-800 rounded-2xl p-8 max-w-md w-full border border-white/20 shadow-2xl">
+            <h2 className="text-2xl font-bold text-white mb-6">Register</h2>
+            
+            {error && (
+              <div className="bg-red-500/20 border border-red-400/30 text-red-300 px-4 py-3 rounded-lg mb-4">
+                {error}
+              </div>
+            )}
+
+            <form onSubmit={handleRegister} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-indigo-200 mb-2">Name</label>
+                <input
+                  type="text"
+                  value={registerName}
+                  onChange={(e) => setRegisterName(e.target.value)}
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:border-indigo-400/50 focus:outline-none text-white"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-indigo-200 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={registerEmail}
+                  onChange={(e) => setRegisterEmail(e.target.value)}
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:border-indigo-400/50 focus:outline-none text-white"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-indigo-200 mb-2">Password</label>
+                <input
+                  type="password"
+                  value={registerPassword}
+                  onChange={(e) => setRegisterPassword(e.target.value)}
+                  className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg focus:border-indigo-400/50 focus:outline-none text-white"
+                  required
+                  minLength={6}
+                />
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg font-semibold disabled:opacity-50"
+                >
+                  {loading ? 'Loading...' : 'Register'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowRegisterModal(false);
+                    setError('');
+                  }}
+                  className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+
+            <p className="text-center text-indigo-200/70 text-sm mt-4">
+              Already have an account?{' '}
+              <button
+                onClick={() => {
+                  setShowRegisterModal(false);
+                  setShowLoginModal(true);
+                }}
+                className="text-indigo-400 hover:text-indigo-300"
+              >
+                Login
+              </button>
+            </p>
+          </div>
+        </div>
+      )}
     </PublicLayout>
   );
 }
