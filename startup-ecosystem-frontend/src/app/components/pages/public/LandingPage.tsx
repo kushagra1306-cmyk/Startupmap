@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PublicLayout } from '../../layouts/PublicLayout';
-import { login, register } from '../../../api/api';
+import { login, register } from '../../../../api/api';
 
 export function LandingPage() {
   const navigate = useNavigate();

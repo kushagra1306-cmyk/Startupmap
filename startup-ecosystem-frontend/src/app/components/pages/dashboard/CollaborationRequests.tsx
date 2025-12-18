@@ -1,11 +1,25 @@
 import { useState, useEffect } from 'react';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { getSentRequests, getReceivedRequests, respondToRequest, requireAuth } from '../../../api/api';
+import { getSentRequests, getReceivedRequests, respondToRequest, requireAuth } from '../../../../api/api';
+
+interface Business {
+  id: string;
+  name: string;
+}
+
+interface CollaborationRequest {
+  id: string;
+  requestType: string;
+  message: string;
+  status: 'PENDING' | 'ACCEPTED' | 'REJECTED';
+  senderBusiness?: Business;
+  receiverBusiness?: Business;
+}
 
 export function CollaborationRequests() {
-  const [activeTab, setActiveTab] = useState('received');
-  const [receivedRequests, setReceivedRequests] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
+  const [activeTab, setActiveTab] = useState<'received' | 'sent'>('received');
+  const [receivedRequests, setReceivedRequests] = useState<CollaborationRequest[]>([]);
+  const [sentRequests, setSentRequests] = useState<CollaborationRequest[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,13 +42,14 @@ export function CollaborationRequests() {
     }
   };
 
-  const handleRespond = async (requestId, status) => {
+  const handleRespond = async (requestId: string, status: 'ACCEPTED' | 'REJECTED') => {
     try {
       await respondToRequest(requestId, status);
       alert(`Request ${status.toLowerCase()}!`);
       loadRequests(); // Reload
     } catch (err) {
-      alert('Failed to respond: ' + err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      alert('Failed to respond: ' + errorMessage);
     }
   };
 
@@ -79,7 +94,10 @@ export function CollaborationRequests() {
         ) : (
           <div className="space-y-4">
             {requests.map((request) => (
-              <div key={request.id} className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl p-6 rounded-2xl border border-white/20">
+              <div
+                key={request.id}
+                className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl p-6 rounded-2xl border border-white/20"
+              >
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-2">
@@ -91,11 +109,15 @@ export function CollaborationRequests() {
                     <p className="text-indigo-200 mb-2">Type: {request.requestType}</p>
                     <p className="text-white/90 mb-2">{request.message}</p>
                   </div>
-                  <span className={`px-3 py-1 rounded-lg text-sm ${
-                    request.status === 'PENDING' ? 'bg-yellow-500/20 text-yellow-300' :
-                    request.status === 'ACCEPTED' ? 'bg-green-500/20 text-green-300' :
-                    'bg-red-500/20 text-red-300'
-                  }`}>
+                  <span
+                    className={`px-3 py-1 rounded-lg text-sm ${
+                      request.status === 'PENDING'
+                        ? 'bg-yellow-500/20 text-yellow-300'
+                        : request.status === 'ACCEPTED'
+                        ? 'bg-green-500/20 text-green-300'
+                        : 'bg-red-500/20 text-red-300'
+                    }`}
+                  >
                     {request.status}
                   </span>
                 </div>

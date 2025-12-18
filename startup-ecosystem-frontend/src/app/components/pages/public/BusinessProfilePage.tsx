@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { PublicLayout } from '../../layouts/PublicLayout';
-import { getBusinessById, sendCollaborationRequest, isLoggedIn } from '../../../api/api';
+import { getBusinessById, sendCollaborationRequest, isLoggedIn } from '../../../../api/api';
+
+interface Business {
+  id: string;
+  name: string;
+  category: string;
+  description: string;
+  city: string;
+  contactEmail: string;
+}
 
 export function BusinessProfilePage() {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [business, setBusiness] = useState(null);
+  const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -23,7 +32,7 @@ export function BusinessProfilePage() {
   const loadBusiness = async () => {
     try {
       setLoading(true);
-      const response = await getBusinessById(id);
+      const response = await getBusinessById(id!);
       setBusiness(response.business);
     } catch (err) {
       setError('Failed to load business');
@@ -33,7 +42,7 @@ export function BusinessProfilePage() {
     }
   };
 
-  const handleSendRequest = async (e) => {
+  const handleSendRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!isLoggedIn()) {
@@ -45,14 +54,15 @@ export function BusinessProfilePage() {
     try {
       await sendCollaborationRequest({
         senderBusinessId: parseInt(senderBusinessId),
-        receiverBusinessId: parseInt(id),
+        receiverBusinessId: parseInt(id!),
         requestType,
         message,
       });
       alert('Collaboration request sent!');
       setShowRequestModal(false);
     } catch (err) {
-      alert('Failed to send request: ' + err.message);
+      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+      alert('Failed to send request: ' + errorMessage);
     }
   };
 

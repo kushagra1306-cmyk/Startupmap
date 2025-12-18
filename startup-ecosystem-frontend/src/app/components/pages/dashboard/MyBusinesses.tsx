@@ -1,10 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { getMyBusinesses, requireAuth } from '../../../api/api';
+import { getMyBusinesses, requireAuth } from '../../../../api/api';
+
+interface Business {
+  id: string;
+  name: string;
+  category: string;
+  status: 'VERIFIED' | 'NEW' | 'PENDING' | 'REJECTED';
+}
 
 export function MyBusinesses() {
-  const [businesses, setBusinesses] = useState([]);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +50,7 @@ export function MyBusinesses() {
               <div className="col-span-3 font-semibold text-white">Actions</div>
             </div>
 
-            {businesses.map((business, index) => (
+            {businesses.map((business) => (
               <div key={business.id} className="grid grid-cols-12 gap-4 px-6 py-5 border-b border-white/10 hover:bg-white/5">
                 <div className="col-span-4 text-white">{business.name}</div>
                 <div className="col-span-3 text-indigo-200">{business.category}</div>

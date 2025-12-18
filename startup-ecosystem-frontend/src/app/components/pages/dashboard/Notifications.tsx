@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
 import { DashboardLayout } from '../../layouts/DashboardLayout';
-import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, requireAuth } from '../../../api/api';
+import { getNotifications, markNotificationAsRead, markAllNotificationsAsRead, requireAuth } from '../../../../api/api';
+
+interface Notification {
+  id: string;
+  type: 'COLLAB_REQUEST' | 'ACCEPTED' | 'REJECTED' | string;
+  message: string;
+  isRead: boolean;
+  created_at: string;
+}
 
 export function Notifications() {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +30,7 @@ export function Notifications() {
     }
   };
 
-  const handleMarkAsRead = async (id) => {
+  const handleMarkAsRead = async (id: string) => {
     try {
       await markNotificationAsRead(id);
       loadNotifications(); // Reload
@@ -40,7 +48,7 @@ export function Notifications() {
     }
   };
 
-  const getNotificationIcon = (type) => {
+  const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'COLLAB_REQUEST': return '📨';
       case 'ACCEPTED': return '✅';
