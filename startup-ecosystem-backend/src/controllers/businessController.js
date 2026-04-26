@@ -1,4 +1,4 @@
-const { Business } = require('../models');
+const { Business, User } = require('../models');
 
 exports.createBusiness = async (req, res, next) => {
   try {
@@ -62,11 +62,21 @@ exports.getBusinessById = async (req, res, next) => {
   try {
     const business = await Business.findByPk(req.params.id, {
       include: [{
-        model: require('./User'),
+        model: User,
         as: 'owner',
         attributes: ['id', 'name']
       }]
     });
+
+    if (!business) {
+      return res.status(404).json({ error: 'Business not found' });
+    }
+
+    res.json({ business });
+  } catch (error) {
+    next(error);
+  }
+};
 
     if (!business) {
       return res.status(404).json({ error: 'Business not found' });
