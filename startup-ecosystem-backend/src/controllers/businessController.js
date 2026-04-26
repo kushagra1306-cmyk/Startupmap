@@ -78,16 +78,6 @@ exports.getBusinessById = async (req, res, next) => {
   }
 };
 
-    if (!business) {
-      return res.status(404).json({ error: 'Business not found' });
-    }
-
-    res.json({ business });
-  } catch (error) {
-    next(error);
-  }
-};
-
 exports.updateBusiness = async (req, res, next) => {
   try {
     const business = await Business.findOne({
