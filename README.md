@@ -1,11 +1,32 @@
+# Startup Map
 
-  # Low-Fidelity Wireframe Design (Copy) (Copy)
+A web application that enables startups to discover and connect with other businesses.
 
-  This is a code bundle for Low-Fidelity Wireframe Design (Copy) (Copy). The original project is available at https://www.figma.com/design/0jat8CbNmx8ZdYrxzn40HU/Low-Fidelity-Wireframe-Design--Copy---Copy-.
+## Features
+- User authentication
+- Startup discovery
+- Backend API integration
 
-  ## Running the code
+## Tech Stack
+- Frontend: (React / HTML / etc.)
+- Backend: Node.js, Express
+- Database: (MongoDB / SQL)
 
-  Run `npm i` to install the dependencies.
+## Project Structure
+- /frontend
+- /backend
 
-  Run `npm run dev` to start the development server.
-  
+## How to Run
+
+### Backend
+cd backend
+npm install
+npm start
+
+### Frontend
+cd frontend
+npm install
+npm start
+
+## Author
+Kushagra Narang
