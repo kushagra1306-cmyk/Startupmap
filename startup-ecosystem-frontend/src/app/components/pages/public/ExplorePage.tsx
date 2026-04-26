@@ -62,10 +62,16 @@ export function ExplorePage() {
           </select>
         </div>
 
-        {/* Loading/Error States */}
         {loading && (
-          <div className="text-center text-white py-8">Loading businesses...</div>
-        )}
+  <div className="text-center text-white py-8">Loading businesses...</div>
+)}
+
+{!loading && !error && filteredBusinesses.length === 0 && !searchQuery && (
+  <div className="text-center text-indigo-200 py-12">
+    <p className="text-xl mb-2">No businesses found</p>
+    <p className="text-sm">Make sure the backend server is running on port 5000</p>
+  </div>
+)}
 
         {error && (
           <div className="bg-red-500/20 border border-red-400/30 text-red-300 px-4 py-3 rounded-lg mb-4">
